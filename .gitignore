@@ -1,0 +1,10 @@
+# Heavy intermediate artifacts not needed by Manus
+backup-pre-rebuild/
+_raw/
+_published/
+site/_preview/
+site/_raw/
+
+# OS junk
+.DS_Store
+*.swp

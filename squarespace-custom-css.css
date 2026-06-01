@@ -1,0 +1,205 @@
+/* ============================================================
+   ATL FILM STUDIOS — Custom CSS
+   Brand: A24 / Focus Features editorial · cinematic restraint
+   Palette: paper white on near-black · cyan/teal accent
+   ============================================================ */
+
+:root {
+  --paper:        #f6f4f1;
+  --ink:          #1a1a1a;
+  --black:        #0d0d0d;
+  --accent:       #4dd6c1;
+  --accent-deep:  #2bb59f;
+  --muted:        rgba(255, 255, 255, 0.6);
+  --muted-dark:   rgba(0, 0, 0, 0.55);
+  --rule:         rgba(255, 255, 255, 0.12);
+  --rule-dark:    rgba(0, 0, 0, 0.10);
+}
+
+/* ----- Type ----- */
+h1, h2, h3 {
+  letter-spacing: -0.025em !important;
+  line-height: 1.04 !important;
+}
+h1 { font-size: clamp(44px, 7vw, 88px) !important; }
+h2 { font-size: clamp(32px, 4.5vw, 56px) !important; }
+h3 { font-size: clamp(22px, 2.4vw, 32px) !important; }
+h1, h2, h3, h4 { margin-bottom: 0.6em !important; }
+
+/* ----- Eyebrow label utility ----- */
+.eyebrow,
+p.eyebrow,
+.sqs-block-content p strong:first-child {
+  font-family: 'futura-pt', 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--accent) !important;
+  display: inline-block !important;
+  margin-bottom: 1.5em !important;
+}
+
+/* ----- Banner / hero overlay ----- */
+.page-banner-wrapper::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.78) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.page-banner-wrapper .page-banner-content { z-index: 2; }
+.page-banner-wrapper h1 { max-width: 18ch; color: var(--paper); }
+
+/* ----- Buttons: flat-square teal with cinematic feel ----- */
+.sqs-block-button-element--medium,
+.sqs-block-button-element--large,
+.sqs-button-element--primary {
+  border-radius: 2px !important;
+  font-family: 'futura-pt', sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  font-size: 13px !important;
+  padding: 16px 28px !important;
+  background: var(--accent) !important;
+  color: var(--black) !important;
+  border: 1px solid var(--accent) !important;
+  transition: transform 0.15s, opacity 0.15s, background 0.15s !important;
+}
+.sqs-block-button-element--medium:hover,
+.sqs-block-button-element--large:hover {
+  background: var(--accent-deep) !important;
+  transform: translateY(-1px);
+}
+
+/* ----- Gallery + image hover ----- */
+.sqs-gallery-design-grid-slide img,
+.image-block-outer-wrapper img {
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s;
+}
+.sqs-gallery-design-grid-slide:hover img {
+  transform: scale(1.03);
+  opacity: 0.92;
+}
+
+/* ----- Header transparency over hero ----- */
+.Header {
+  background: transparent !important;
+  transition: background 0.3s;
+}
+body.tweak-fixed-header-active .Header--top--fixed,
+.Header.is-scrolled {
+  background: rgba(13, 13, 13, 0.92) !important;
+  backdrop-filter: blur(14px);
+}
+
+/* ----- Footer ----- */
+.Footer {
+  background: var(--black);
+  color: var(--muted);
+  padding-top: clamp(60px, 8vw, 100px);
+}
+.Footer a:hover { color: var(--paper); }
+.Footer .sqs-svg-icon--social { fill: var(--paper); }
+
+/* ----- Price aside block (Code Block on set pages) ----- */
+.price-aside {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 38px 32px;
+  border-radius: 2px;
+  position: sticky;
+  top: 100px;
+}
+.price-aside .price-headline {
+  font-family: 'futura-pt', serif;
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  color: var(--paper);
+}
+.price-aside .price-headline span {
+  font-size: 18px;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 8px;
+}
+.price-aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 26px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+.price-aside ul li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+}
+.price-aside ul li::before {
+  content: "—";
+  color: var(--accent);
+  margin-right: 10px;
+}
+.price-aside .btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  font-family: 'futura-pt', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.price-aside .btn-primary {
+  background: var(--accent);
+  color: var(--black);
+  border-color: var(--accent);
+}
+.price-aside .btn-primary:hover {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+}
+.price-aside .btn-secondary {
+  background: transparent;
+  color: var(--paper);
+  border-color: var(--rule);
+}
+.price-aside .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--paper);
+}
+.price-aside .btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border-color: var(--accent);
+}
+.price-aside .btn-ghost:hover {
+  background: var(--accent);
+  color: var(--black);
+}
+.price-aside .micro {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 18px;
+  letter-spacing: 0.04em;
+}
+
+/* ----- Mobile refinements ----- */
+@media (max-width: 640px) {
+  h1 { font-size: 38px !important; }
+  h2 { font-size: 28px !important; }
+  .page-banner-wrapper { min-height: 60vh; }
+  .price-aside { position: static; padding: 28px 22px; }
+  .sqs-block-button-element--medium { padding: 18px 24px !important; }
+}
