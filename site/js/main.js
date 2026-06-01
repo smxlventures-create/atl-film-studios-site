@@ -135,7 +135,7 @@
 
         // Show simple confirmation
         var confirm = document.createElement('div');
-        confirm.innerHTML = '<p class="lead" style="color:var(--accent); margin-top:30px;">Got it — we will respond within 2 hours during business hours. For urgent inquiries, call 470-231-8971.</p>';
+        confirm.innerHTML = '<p class="lead" style="color:var(--accent); margin-top:30px;">Got it — we will respond within 2 hours during business hours. For urgent inquiries, call 404-973-6413.</p>';
         form.parentNode.replaceChild(confirm, form);
         return false;
       }
