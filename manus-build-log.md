@@ -32,3 +32,44 @@ While waiting: I pushed dns-cutover-plan.md, verify-deployment.sh, and finalized
 ## Cycle 5 (T+~45) — pending audit
 ## Cycle 6 (T+~55) — pending audit
 ## Cycle 7 (T+60) — final audit + handoff status
+
+## Cycle 4 (T+~35) — Step 3/6 in progress
+- Manus reading site/css/style.css thoroughly (lines 101-200, 201-300, 301-400, 500-700, 701-850)
+- Confirmed Manus understands brand: "the site uses A24/Focus Features aesthetic with restrained cinematic styling, flexible layout, and custom buttons"
+- Reading squarespace-home-utility-pages.md (lines 1-150, 151-300+)
+- Inspecting courtroom.html (task time 2:28 into step 3)
+- Still no GitHub push from Manus (working in sandbox)
+
+No course-corrections needed. Manus is being thorough.
+
+## Cycle 5 (T+~45) — Manus pacing slower than estimated
+- Still on step 3/6 (implementing branding/assets/logo/pricing/booking)
+- Task time at 3:10 minutes within step 3
+- Has thoroughly read all of style.css, home-utility-pages.md, courtroom.html
+- Quality of work appears high — Manus is reading everything before writing anything
+- Build will likely finish T+80-90 (past the 1-hour mark)
+- No GitHub push from Manus yet
+
+## Cycle 6 (T+~55) — final audit before close-of-hour
+- Audit Manus state at the 1-hour mark
+- If still building: let it finish, schedule final review after
+- If deployed: run verify-deployment.sh against the preview URL
+
+## Cycle 7 — final handoff status
+- TBD post-1-hour
+
+## Cycle 6 (T+~55) — Step 3/6 DONE, Step 4/6 IN PROGRESS
+- ✅ Step 3 complete (branding, assets, logo, pricing, booking flow integrated)
+- 🔄 Step 4 in progress: "Implement verbatim page copy, pixel ID, and JSON-LD schema site-wide"
+- Manus is writing a Python script `generate_pages.py` to programmatically build all 13 HTML pages from the brief's verbatim content
+- Approach guarantees consistent Pixel + JSON-LD injection across every page
+- Task time 1:08 in step 4
+
+## REPO RECONCILIATION
+User shared Manus's actual repo: https://github.com/smxlventures-create/atl-film-studio-website
+- Different name than mine (atl-film-studios-site)
+- PRIVATE repo
+- Stack: Vite + React/TypeScript (client/ + server/ + pnpm-lock.yaml)
+- Last commit before my correction (19:35 UTC): "Cosmic Bauhaus themed website"
+- Manus is currently rebuilding inside its sandbox; final push expected at end of step 5/6 or 6/6
+- My repo (atl-film-studios-site) has all the source assets + scaffolds + build log; serves as the canonical SPEC repo even if not the canonical CODE repo
