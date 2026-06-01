@@ -1562,10 +1562,17 @@ img {
   color: var(--ink);
 }
 
-.location-map-img {
+.location-map-img,
+.location-map-iframe {
   width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(26, 29, 30, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(26, 29, 30, 0.08);
+  border: 1px solid var(--border);
+  transition: transform 0.3s var(--ease-out);
+}
+
+.location-map-iframe:hover {
+  transform: translateY(-4px);
 }
 
 /* Contact Page */
