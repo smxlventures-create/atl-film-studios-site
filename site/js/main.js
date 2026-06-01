@@ -80,12 +80,36 @@
   }
 
   // ---------- Outbound CTA pixel events ----------
+  // Auto-detects Peerspace, Giggster, and phone links and fires custom Meta
+  // events on click. No data-track attributes required — works on any page.
   function initCTATracking() {
+    // 1) Explicit data-track elements (kept for backward compat)
     document.querySelectorAll('[data-track]').forEach(function (el) {
       el.addEventListener('click', function () {
         var name = el.getAttribute('data-track');
         var listing = el.getAttribute('data-listing') || '';
         track(name, { listing: listing, path: window.location.pathname });
+      });
+    });
+
+    // 2) Auto-detect Peerspace outbound links
+    document.querySelectorAll('a[href*="peerspace.com"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('ClickToPeerspace', { url: a.href, path: window.location.pathname });
+      });
+    });
+
+    // 3) Auto-detect Giggster outbound links
+    document.querySelectorAll('a[href*="giggster.com"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('ClickToGiggster', { url: a.href, path: window.location.pathname });
+      });
+    });
+
+    // 4) Auto-detect tel: phone links
+    document.querySelectorAll('a[href^="tel:"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('ClickToCall', { number: a.href.replace('tel:', ''), path: window.location.pathname });
       });
     });
   }
