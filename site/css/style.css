@@ -170,7 +170,8 @@ hr {
   display: none;
 }
 
-.nav-links {
+.nav-links,
+.nav-list {
   display: flex;
   gap: clamp(20px, 3vw, 40px);
   align-items: center;
@@ -178,18 +179,28 @@ hr {
   margin: 0;
   padding: 0;
 }
-.nav-links a {
+.nav-links a,
+.nav-list a {
   font-size: 14px;
   letter-spacing: 0.04em;
   color: var(--paper);
   opacity: 0.78;
   transition: opacity 0.15s;
+  text-decoration: none;
 }
-.nav-links a:hover, .nav-links a.active { opacity: 1; }
+.nav-links a:hover, .nav-links a.active,
+.nav-list a:hover, .nav-list a.active { opacity: 1; }
 
-.nav-cta {
+/* On light-background pages, nav text needs to be dark */
+.section + .header .nav-links a,
+header.header .nav-list a {
+  color: var(--ink);
+}
+
+.nav-cta,
+.nav-btn {
   background: var(--accent);
-  color: var(--black);
+  color: var(--black) !important;
   padding: 10px 18px;
   font-size: 13px;
   letter-spacing: 0.06em;
@@ -197,8 +208,41 @@ hr {
   font-weight: 500;
   border-radius: 2px;
   transition: transform 0.15s;
+  opacity: 1 !important;
 }
-.nav-cta:hover { transform: translateY(-1px); opacity: 1; }
+.nav-cta:hover, .nav-btn:hover { transform: translateY(-1px); opacity: 1; }
+
+/* Manus's .header / .header-container wrapper compatibility */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(13, 13, 13, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  color: var(--paper);
+}
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+.header .logo,
+.header-container .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.header .nav-list a,
+.header-container .nav-list a {
+  color: var(--paper);
+}
 
 .nav-toggle {
   display: none;
@@ -208,7 +252,8 @@ hr {
 
 @media (max-width: 880px) {
   .nav-toggle { display: block; }
-  .nav-links {
+  .nav-links,
+  .nav-list {
     display: none;
     position: absolute;
     top: 100%;
@@ -221,7 +266,8 @@ hr {
     gap: 20px;
     align-items: flex-start;
   }
-  .nav-links.open { display: flex; }
+  .nav-links.open,
+  .nav-list.open { display: flex; }
 }
 
 /* ---------- HERO ---------- */
