@@ -1929,3 +1929,76 @@ img {
     gap: 32px;
   }
 }
+
+/* Pricing Tiers & Direct Booking Incentives */
+.pricing-option {
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: all 0.2s var(--ease-out);
+}
+
+.direct-option {
+  background-color: var(--accent-light);
+  border: 1px solid rgba(197, 155, 109, 0.3);
+  position: relative;
+}
+
+.direct-option:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(197, 155, 109, 0.08);
+}
+
+.platform-option {
+  background-color: rgba(26, 29, 30, 0.02);
+  border: 1px solid var(--border);
+}
+
+.option-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  background-color: rgba(197, 155, 109, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.option-label {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.pricing-option .price-row-hourly {
+  margin-bottom: 4px;
+}
+
+.pricing-option .price-row-hourly .price-val-hourly {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.pricing-option .price-row-hourly .price-unit-hourly {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.pricing-option .price-row .price-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.pricing-option .price-row .price-unit {
+  font-size: 12px;
+  color: var(--muted);
+}
