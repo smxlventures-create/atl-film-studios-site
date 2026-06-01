@@ -23,25 +23,24 @@
 
   // ---------- Mobile nav toggle ----------
   function initMobileNav() {
+    var overlay = document.getElementById('mobileMenuOverlay');
     var toggle = document.querySelector('.nav-toggle');
-    var links = document.querySelector('.nav-links');
-    if (!toggle || !links) return;
-
-    toggle.addEventListener('click', function () {
-      links.classList.toggle('open');
-      var open = links.classList.contains('open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.textContent = open ? '×' : '☰';
-    });
-
-    // close on link click
-    links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.textContent = '☰';
-      });
-    });
+    
+    window.toggleMobileMenu = function() {
+      if (!overlay) overlay = document.getElementById('mobileMenuOverlay');
+      if (!toggle) toggle = document.querySelector('.nav-toggle');
+      
+      if (overlay) {
+        overlay.classList.toggle('open');
+        var isOpen = overlay.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        
+        if (toggle) {
+          toggle.classList.toggle('active', isOpen);
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+      }
+    };
   }
 
   // ---------- Gallery lightbox ----------

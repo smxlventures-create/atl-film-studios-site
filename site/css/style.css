@@ -1183,3 +1183,413 @@ input:focus, textarea:focus, select:focus {
   text-decoration-color: var(--accent-deep);
   text-underline-offset: 4px;
 }
+
+/* =====================================================================
+   REDESIGNED NAVIGATION MENU & MOBILE FULLSCREEN OVERLAY
+   ===================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 13, 15, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(236, 237, 238, 0.08);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+}
+.logo-img {
+  max-height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Main Desktop Navigation */
+.main-nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: clamp(20px, 2vw, 36px);
+  height: 100%;
+}
+.nav-links > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.nav-link-item {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 10px 0;
+}
+.nav-link-item:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+.nav-link-item .chevron {
+  font-size: 8px;
+  transition: transform 0.2s ease;
+}
+.nav-links > li:hover .nav-link-item .chevron {
+  transform: rotate(180deg);
+}
+
+/* Mega Menu Dropdown */
+.has-mega-menu {
+  position: relative;
+}
+.mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) scale(0.98);
+  width: 680px;
+  background: var(--ink);
+  border: 1px solid rgba(236, 237, 238, 0.08);
+  border-radius: 4px;
+  padding: 30px;
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease, visibility 0.2s;
+  pointer-events: none;
+}
+.has-mega-menu:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
+}
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 30px;
+}
+.mega-menu-col {
+  display: flex;
+  flex-direction: column;
+}
+.mega-menu-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(236, 237, 238, 0.06);
+  padding-bottom: 8px;
+}
+.mega-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mega-menu-list a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  opacity: 0.75;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mega-menu-list a:hover {
+  opacity: 1;
+  color: var(--accent);
+  transform: translateX(3px);
+}
+.badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge.cyan-outline {
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+.badge-new {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-phone {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+.header-phone:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* Nav Toggle Button (Hamburger) */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 110;
+  flex-direction: column;
+  gap: 6px;
+}
+.nav-toggle .bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--text-on-dark);
+  transition: all 0.3s ease;
+}
+.nav-toggle.active .bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.nav-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.active .bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Mobile Overlay Menu */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 13, 15, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 105;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  display: flex;
+  flex-direction: column;
+}
+.mobile-menu-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.mobile-menu-header {
+  height: 70px;
+  padding: 0 var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(236, 237, 238, 0.05);
+}
+.mobile-menu-close {
+  background: none;
+  border: none;
+  color: var(--text-on-dark);
+  font-size: 36px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 10px;
+}
+.mobile-menu-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px var(--gutter);
+  overflow-y: auto;
+}
+.mobile-nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.mobile-nav-links > li > a,
+.mobile-submenu-toggle {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mobile-submenu-toggle .chevron {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+.mobile-has-submenu.open .mobile-submenu-toggle .chevron {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+.mobile-submenu {
+  list-style: none;
+  padding-left: 15px;
+  margin-top: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  border-left: 1px solid rgba(0, 229, 240, 0.2);
+}
+.mobile-has-submenu.open .mobile-submenu {
+  display: flex;
+}
+.mobile-submenu a {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  opacity: 0.8;
+}
+.mobile-menu-footer {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.mobile-cta {
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+  font-size: 16px;
+}
+.mobile-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobile-contact-info p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.mobile-contact-info a {
+  color: var(--text-on-dark);
+  text-decoration: none;
+  font-family: var(--font-mono);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .main-nav, .header-actions {
+    display: none;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+  .site-header {
+    height: 70px;
+  }
+}
+
+/* =====================================================================
+   CRITICAL OVERRIDES FOR NAV RESET & LAYOUT FIXES
+   ===================================================================== */
+/* Reset list styles for all header and overlay nav items */
+.site-header ul,
+.site-header li,
+.mobile-menu-overlay ul,
+.mobile-menu-overlay li {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fix mobile menu overlay layout leak */
+.mobile-menu-overlay {
+  display: none !important;
+  opacity: 0;
+  visibility: hidden;
+}
+.mobile-menu-overlay.open {
+  display: flex !important;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure mega menu column text aligns cleanly */
+.mega-menu-list li {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Add bulletproof layout to mega menu dropdown */
+.mega-menu {
+  display: block !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.has-mega-menu:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}

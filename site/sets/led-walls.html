@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/style.css?v=20260601">
+  <link rel="stylesheet" href="../css/style.css?v=20260602">
   
   <!-- Meta Pixel Code -->
   <script>
@@ -39,10 +39,7 @@
     fbq('init', '1373400664837883');
     fbq('track', 'PageView');
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1373400664837883&ev=PageView&noscript=1">
-  </noscript>
-  <!-- End Meta Pixel Code -->
+<!-- End Meta Pixel Code -->
 
   <script type="application/ld+json">
   {
@@ -225,37 +222,108 @@
 
 </head>
 <body class="dark" style="background: var(--black); color: var(--text-on-dark);">
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1373400664837883&ev=PageView&noscript=1">
+  </noscript>
+  
 
-  <header class="site-header">
-    <div class="container nav">
+    <header class="site-header">
+    <div class="container nav-container">
       <a href="../index.html" class="logo" aria-label="ATL Film Studios — Home">
         <img src="../photos/atl-film-studios-logo-2025.png" alt="ATL Film Studios" class="logo-img" width="160" height="160" loading="eager">
       </a>
       
-      <button class="nav-toggle" aria-label="Toggle Navigation" onclick="document.querySelector('.nav-list').classList.toggle('open'); this.classList.toggle('active');">☰</button>
-      
-      <ul class="nav-list">
-        <li class="has-dropdown">
-          <a href="#" onclick="event.preventDefault(); this.parentElement.classList.toggle('open');">The Sets <span style="font-size:10px; margin-left:2px;">▼</span></a>
-          <ul class="dropdown">
-            <li><a href="../sets/courtroom.html">Courtroom</a></li>
-            <li><a href="../sets/hospital.html">Hospital</a></li>
-            <li><a href="../sets/psych-wall.html">Psych Wall</a></li>
-            <li><a href="../sets/police-bullpen.html">Police Bullpen</a></li>
-            <li><a href="../sets/interrogation.html">Interrogation</a></li>
-            <li><a href="../sets/jail-cell.html">Jail Cell</a></li>
-            <li><a href="../sets/prison-cell.html">Prison Cell</a></li>
-            <li><a href="../sets/led-walls.html">LED Walls</a></li>
-          </ul>
-        </li>
-        <li><a href="../about.html" >About</a></li>
-        <li><a href="../location.html" >Location</a></li>
-        <li><a href="../faq.html" >FAQ</a></li>
-        <li><a href="../contact.html" >Contact</a></li>
-        <li><a href="../contact.html" class="nav-btn">Request Quote</a></li>
-      </ul>
+      <nav class="main-nav">
+        <ul class="nav-links">
+          <li class="has-mega-menu">
+            <a href="#" class="nav-link-item" onclick="event.preventDefault();">The Sets <span class="chevron">▼</span></a>
+            <div class="mega-menu">
+              <div class="mega-menu-grid">
+                <div class="mega-menu-col">
+                  <span class="mega-menu-title">Precinct & Law</span>
+                  <ul class="mega-menu-list">
+                    <li><a href="../sets/courtroom.html">Courtroom <span class="badge">Standing Set</span></a></li>
+                    <li><a href="../sets/police-bullpen.html">Police Bullpen <span class="badge">Standing Set</span></a></li>
+                    <li><a href="../sets/interrogation.html">Interrogation Room <span class="badge">Standing Set</span></a></li>
+                    <li><a href="../sets/jail-cell.html">Jail Cell <span class="badge cyan-outline">In Production</span></a></li>
+                    <li><a href="../sets/prison-cell.html">Prison Cell <span class="badge cyan-outline">In Production</span></a></li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <span class="mega-menu-title">Medical & Specialized</span>
+                  <ul class="mega-menu-list">
+                    <li><a href="../sets/hospital.html">Hospital Room & Corridor <span class="badge">Standing Set</span></a></li>
+                    <li><a href="../sets/psych-wall.html">Psychiatric Padded Room <span class="badge">Standing Set</span></a></li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <span class="mega-menu-title">Virtual Production</span>
+                  <ul class="mega-menu-list">
+                    <li><a href="../sets/led-walls.html">VFX LED Volume Walls <span class="badge-new">Virtual</span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li><a href="../about.html" class="nav-link-item">About</a></li>
+          <li><a href="../location.html" class="nav-link-item">Location</a></li>
+          <li><a href="../faq.html" class="nav-link-item">FAQ</a></li>
+          <li><a href="../contact.html" class="nav-link-item">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="tel:+14049736413" class="header-phone" title="Call primary line">(404) 973-6413</a>
+        <a href="../contact.html" class="nav-btn">Request Quote</a>
+      </div>
+
+      <button class="nav-toggle" aria-label="Toggle Navigation" onclick="toggleMobileMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
   </header>
+
+  <!-- Mobile Fullscreen Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-header">
+      <a href="../index.html" class="logo" onclick="toggleMobileMenu()">
+        <img src="../photos/atl-film-studios-logo-2025.png" alt="ATL Film Studios" class="logo-img" width="120" height="120">
+      </a>
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close Menu">×</button>
+    </div>
+    <div class="mobile-menu-content">
+      <ul class="mobile-nav-links">
+        <li class="mobile-has-submenu">
+          <button class="mobile-submenu-toggle" onclick="this.parentElement.classList.toggle('open')">The Sets <span class="chevron">▼</span></button>
+          <ul class="mobile-submenu">
+            <li><a href="../sets/courtroom.html" onclick="toggleMobileMenu()">Courtroom</a></li>
+            <li><a href="../sets/hospital.html" onclick="toggleMobileMenu()">Hospital Room</a></li>
+            <li><a href="../sets/psych-wall.html" onclick="toggleMobileMenu()">Psychiatric Room</a></li>
+            <li><a href="../sets/police-bullpen.html" onclick="toggleMobileMenu()">Police Bullpen</a></li>
+            <li><a href="../sets/interrogation.html" onclick="toggleMobileMenu()">Interrogation Room</a></li>
+            <li><a href="../sets/jail-cell.html" onclick="toggleMobileMenu()">Jail Cell</a></li>
+            <li><a href="../sets/prison-cell.html" onclick="toggleMobileMenu()">Prison Cell</a></li>
+            <li><a href="../sets/led-walls.html" onclick="toggleMobileMenu()">VFX LED Volume Walls</a></li>
+          </ul>
+        </li>
+        <li><a href="../about.html" onclick="toggleMobileMenu()">About</a></li>
+        <li><a href="../location.html" onclick="toggleMobileMenu()">Location</a></li>
+        <li><a href="../faq.html" onclick="toggleMobileMenu()">FAQ</a></li>
+        <li><a href="../contact.html" onclick="toggleMobileMenu()">Contact</a></li>
+      </ul>
+      
+      <div class="mobile-menu-footer">
+        <a href="../contact.html" class="nav-btn mobile-cta" onclick="toggleMobileMenu()">Request Quote</a>
+        <div class="mobile-contact-info">
+          <p class="phone-link">Primary: <a href="tel:+14049736413">(404) 973-6413</a></p>
+          <p class="phone-link">Backup: <a href="tel:+14702318971">(470) 231-8971</a></p>
+          <p class="address">Atlanta, GA</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="sets-subnav">
     <a href="courtroom.html" >Courtroom</a>
