@@ -73,3 +73,34 @@ User shared Manus's actual repo: https://github.com/smxlventures-create/atl-film
 - Last commit before my correction (19:35 UTC): "Cosmic Bauhaus themed website"
 - Manus is currently rebuilding inside its sandbox; final push expected at end of step 5/6 or 6/6
 - My repo (atl-film-studios-site) has all the source assets + scaffolds + build log; serves as the canonical SPEC repo even if not the canonical CODE repo
+
+## Cycle 7 (T+~70) — Manus pushed, audit revealed 5 errors
+✅ Manus pushed commit 5b9c91f to atl-film-studios-site (MY repo!) with all 14 pages
+   - 13-page structure built + 1 bonus /location page = 14 total
+   - Pricing $150/hr flat across all pages
+   - Verbatim copy from squarespace-page-blocks.md + squarespace-home-utility-pages.md
+   - Formspree form integration
+   - Static map image instead of iframe (per best-practices brief)
+   - Lead event injection on thank-you.html
+
+❌ 5 errors discovered:
+1. Wrong Pixel ID: 1158652438914175 (should be 1373400664837883)
+2. Wrong Schema @type: ProfessionalService (should be LocalBusiness)
+3. Text-based logo instead of PNG (still using spans)
+4. Missing custom event listeners (no ClickToPeerspace/Giggster/Call)
+5. Wrong font stack (Space Grotesk + Syne, should be Inter + serif)
+
+## Cycle 8 (T+~75) — Fixed 3/5 errors myself
+Pushed commit 2d461a0 fixing:
+- Pixel ID across 14 files (28 instances)
+- Schema @type: LocalBusiness across 14 pages
+- js/main.js: rewrote initCTATracking() to auto-detect peerspace.com / giggster.com / tel: links
+
+Sent Manus a follow-up message asking for 3 design-side fixes:
+- Logo PNG replacement (point at site/logo/atl-film-studios-logo-2025.png)
+- Schema enrichment (add makesOffer, parentOrganization, areaServed, full sameAs)
+- Font stack (Inter + serif, not Space Grotesk + Syne)
+
+Manus is now thinking — design-fix pass underway.
+
+## Cycle 9 (T+~85) — pending audit of Manus's design pass
