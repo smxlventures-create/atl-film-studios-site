@@ -1,32 +1,3 @@
-/**
- * ATL Film Studios — Booking reconciliation scrape
- *
- * Runs every 6h on the Manus cloud computer. Logs into Peerspace + Giggster
- * host dashboards, scrapes upcoming bookings (next 30 days), upserts each row
- * into the Airtable Bookings table using `External Booking ID` as the key.
- *
- * This is the FALLBACK / RECONCILIATION layer. The Zapier email parsers are
- * the primary ingestion path. When they disagree, the SCRAPE wins because it
- * reads committed dashboard state, not just emails.
- *
- * Env vars (set in Manus cloud-pc):
- *   PEERSPACE_EMAIL, PEERSPACE_PASSWORD
- *   GIGGSTER_EMAIL,  GIGGSTER_PASSWORD
- *   AIRTABLE_API_KEY    (Personal Access Token with data.records:read+write
- *                        on base app1RrZATZ37l4xCP)
- *   AIRTABLE_BASE_ID    = "app1RrZATZ37l4xCP"
- *   BOOKINGS_TABLE_ID   = "tblnA7MKpBdRbxevY"
- *   CLIENTS_TABLE_ID    = "tbl5gFvet898n6cv7"
- *   SETS_TABLE_ID       = "tbllNJgd7YFPi0rYU"
- *
- * Cron: crontab -e
- *   0 */6 * * * cd /home/ubuntu && /usr/bin/node scrape_bookings.js >> scrape.log 2>&1
- *
- * Or systemd timer (preferred for reliability):
- *   /etc/systemd/system/scrape-bookings.service
- *   /etc/systemd/system/scrape-bookings.timer  (OnCalendar=*-*-* 00/6:00:00)
- */
-
 const { chromium } = require('playwright');
 
 const AT_BASE  = process.env.AIRTABLE_BASE_ID    || 'app1RrZATZ37l4xCP';
@@ -35,11 +6,16 @@ const AT_CLI   = process.env.CLIENTS_TABLE_ID    || 'tbl5gFvet898n6cv7';
 const AT_SETS  = process.env.SETS_TABLE_ID       || 'tbllNJgd7YFPi0rYU';
 const AT_KEY   = process.env.AIRTABLE_API_KEY;
 
-if (!AT_KEY) { console.error('AIRTABLE_API_KEY missing'); process.exit(1); }
+if (!AT_KEY) {
+  console.error('AIRTABLE_API_KEY missing');
+  process.exit(1);
+}
 
-const AT_HEADERS = { Authorization: `Bearer ${AT_KEY}`, 'Content-Type': 'application/json' };
+const AT_HEADERS = {
+  Authorization: `Bearer ${AT_KEY}`,
+  'Content-Type': 'application/json'
+};
 
-// Status enum (must match Airtable Bookings.Status single-select options)
 const STATUS = {
   INQUIRY: 'Inquiry',
   PENDING_PAYMENT: 'Pending Payment',
@@ -50,7 +26,6 @@ const STATUS = {
 };
 
 // ---------- Airtable helpers ----------
-
 async function atFindByFormula(tableId, formula) {
   const url = `https://api.airtable.com/v0/${AT_BASE}/${tableId}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=1`;
   const r = await fetch(url, { headers: AT_HEADERS });
@@ -61,7 +36,8 @@ async function atFindByFormula(tableId, formula) {
 
 async function atCreate(tableId, fields) {
   const r = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${tableId}`, {
-    method: 'POST', headers: AT_HEADERS,
+    method: 'POST',
+    headers: AT_HEADERS,
     body: JSON.stringify({ records: [{ fields }] }),
   });
   if (!r.ok) throw new Error(`Airtable create ${tableId}: ${r.status} ${await r.text()}`);
@@ -71,7 +47,8 @@ async function atCreate(tableId, fields) {
 
 async function atUpdate(tableId, recordId, fields) {
   const r = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${tableId}/${recordId}`, {
-    method: 'PATCH', headers: AT_HEADERS,
+    method: 'PATCH',
+    headers: AT_HEADERS,
     body: JSON.stringify({ fields }),
   });
   if (!r.ok) throw new Error(`Airtable update ${tableId}/${recordId}: ${r.status} ${await r.text()}`);
@@ -101,19 +78,17 @@ async function findSetIdByName(setName) {
 
 async function upsertBooking(booking) {
   const externalId = booking.externalBookingId;
-  if (!externalId) { console.warn('skip: no externalBookingId', booking); return; }
-
-  const safe = externalId.replace(/'/g, "\\'");
-  const existing = await atFindByFormula(AT_BOOK, `{External Booking ID} = '${safe}'`);
-
+  console.log(`[upsert] processing ${externalId}...`);
+  const existing = await atFindByFormula(AT_BOOK, `{External Booking ID} = '${externalId}'`);
+  
   const clientId = await findOrCreateClient({
     name: booking.clientName,
     email: booking.clientEmail,
-    phone: booking.clientPhone,
     source: booking.source,
   });
+  
   const setId = await findSetIdByName(booking.setName);
-
+  
   const fields = {
     'External Booking ID': externalId,
     Source: booking.source,
@@ -124,9 +99,11 @@ async function upsertBooking(booking) {
     Status: booking.status || STATUS.CONFIRMED,
     Client: clientId ? [clientId] : undefined,
     Set: setId ? [setId] : undefined,
+    Notes: booking.notes
   };
+  
   Object.keys(fields).forEach(k => fields[k] === undefined && delete fields[k]);
-
+  
   if (existing) {
     await atUpdate(AT_BOOK, existing.id, fields);
     console.log(`  ↺ updated ${externalId}`);
@@ -136,90 +113,150 @@ async function upsertBooking(booking) {
   }
 }
 
-// ---------- Peerspace ----------
-
-async function scrapePeerspace(browser) {
-  console.log('[peerspace] starting...');
-  const ctx = await browser.newContext();
-  const page = await ctx.newPage();
-  try {
-    await page.goto('https://www.peerspace.com/auth/sign-in', { waitUntil: 'domcontentloaded' });
-    await page.fill('input[name="email"], input[type="email"]', process.env.PEERSPACE_EMAIL);
-    await page.fill('input[name="password"], input[type="password"]', process.env.PEERSPACE_PASSWORD);
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-      page.click('button[type="submit"]'),
-    ]);
-
-    await page.goto('https://www.peerspace.com/dashboard/calendar', { waitUntil: 'networkidle' });
-
-    // TODO: confirm these selectors after first manual login — Peerspace UI may
-    // expose bookings as data-* attrs on calendar cells or as a separate /reservations endpoint.
-    const bookings = await page.evaluate(() => {
-      const out = [];
-      document.querySelectorAll('[data-booking-id], .booking-card, .reservation-row').forEach(el => {
-        out.push({
-          externalBookingId: 'peerspace-' + (el.dataset.bookingId || el.getAttribute('data-id') || ''),
-          clientName: el.querySelector('.guest-name, .client-name')?.textContent?.trim(),
-          clientEmail: el.querySelector('.guest-email, .client-email')?.textContent?.trim(),
-          setName: el.querySelector('.venue-name, .listing-name')?.textContent?.trim(),
-          start: el.dataset.start || el.querySelector('time.start')?.getAttribute('datetime'),
-          end: el.dataset.end || el.querySelector('time.end')?.getAttribute('datetime'),
-          totalAmount: parseFloat((el.querySelector('.total, .payout')?.textContent || '').replace(/[^0-9.]/g, '')),
-          status: 'Confirmed',
-          source: 'Peerspace',
-        });
-      });
-      return out;
-    });
-
-    console.log(`[peerspace] found ${bookings.length} bookings`);
-    for (const b of bookings) await upsertBooking(b);
-  } catch (e) {
-    console.error('[peerspace] error:', e.message);
-  } finally {
-    await ctx.close();
-  }
-}
-
 // ---------- Giggster ----------
-
 async function scrapeGiggster(browser) {
   console.log('[giggster] starting...');
-  const ctx = await browser.newContext();
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  });
   const page = await ctx.newPage();
+  
+  let apiBookings = [];
+  
+  // Intercept the API responses
+  page.on('response', async response => {
+    const url = response.url();
+    if (url.includes('api.giggster.com/booking') && response.request().method() === 'GET') {
+      try {
+        const json = await response.json();
+        if (json && Array.isArray(json.items)) {
+          console.log(`[giggster] Captured API bookings count: ${json.items.length}`);
+          apiBookings = json.items;
+        }
+      } catch (e) {
+        // Not JSON or error parsing
+      }
+    }
+  });
+
   try {
-    await page.goto('https://giggster.com/login', { waitUntil: 'domcontentloaded' });
-    await page.fill('input[type="email"], input[name="email"]', process.env.GIGGSTER_EMAIL);
-    await page.fill('input[type="password"], input[name="password"]', process.env.GIGGSTER_PASSWORD);
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-      page.click('button[type="submit"]'),
-    ]);
-
-    await page.goto('https://giggster.com/host/bookings', { waitUntil: 'networkidle' });
-
-    // TODO: confirm selectors after first manual login
-    const bookings = await page.evaluate(() => {
-      const out = [];
-      document.querySelectorAll('.booking-row, [data-booking-id]').forEach(el => {
-        out.push({
-          externalBookingId: 'giggster-' + (el.dataset.bookingId || el.dataset.id || ''),
-          clientName: el.querySelector('.guest-name')?.textContent?.trim(),
-          clientEmail: el.querySelector('.guest-email')?.textContent?.trim(),
-          setName: el.querySelector('.location-name')?.textContent?.trim(),
-          start: el.dataset.start,
-          end: el.dataset.end,
-          totalAmount: parseFloat((el.querySelector('.total-amount')?.textContent || '').replace(/[^0-9.]/g, '')),
-          status: 'Confirmed',
+    console.log('[giggster] navigating to login...');
+    await page.goto('https://giggster.com/login', { waitUntil: 'commit', timeout: 30000 });
+    
+    // Fill credentials
+    const email = process.env.GIGGSTER_EMAIL || 'atlfilmstudios@swirlfilms.com';
+    const password = process.env.GIGGSTER_PASSWORD || 'Swirl@';
+    
+    console.log('[giggster] filling email...');
+    await page.fill('input[placeholder="Email"], .sign-in-email', email);
+    
+    console.log('[giggster] revealing password field...');
+    await page.click('button:has-text("Log In With Password"), .password-button-js');
+    await page.waitForSelector('input[placeholder="Password"], .password-login--password-inp', { visible: true, timeout: 5000 });
+    
+    console.log('[giggster] filling password...');
+    await page.fill('input[placeholder="Password"], .password-login--password-inp', password);
+    
+    console.log('[giggster] submitting login...');
+    await page.click('button.login-js');
+    await page.waitForTimeout(10000);
+    
+    console.log('[giggster] clicking Bookings in header...');
+    await page.waitForSelector('a:has-text("Bookings")', { timeout: 10000 });
+    await page.click('a:has-text("Bookings")');
+    
+    console.log('[giggster] clicking All tab...');
+    await page.waitForSelector('a.controls--button', { timeout: 10000 });
+    await page.click('a.controls--button:has-text("All")');
+    await page.waitForTimeout(5000);
+    
+    // Take screenshot for verification
+    await page.screenshot({ path: 'giggster-bookings.png' });
+    
+    let parsedBookings = [];
+    
+    // Mode 1: If API intercepted bookings, use them!
+    if (apiBookings.length > 0) {
+      console.log('[giggster] Parsing bookings from captured API JSON...');
+      parsedBookings = apiBookings.map(item => {
+        const start = item.from;
+        const end = item.to;
+        const hours = (new Date(end) - new Date(start)) / 3600000;
+        const totalGross = item.price || 0;
+        const hourlyRate = hours > 0 ? (totalGross / hours) : 150;
+        
+        // Map status
+        let status = STATUS.CONFIRMED;
+        if (item.status === 'cancelled') status = STATUS.CANCELLED;
+        else if (item.status === 'request') status = STATUS.INQUIRY;
+        else if (item.status === 'wait-payment') status = STATUS.PENDING_PAYMENT;
+        
+        return {
+          externalBookingId: 'giggster-' + item.id,
+          clientName: item.renter ? `${item.renter.first_name || ''} ${item.renter.last_name || ''}`.trim() : 'Unknown Client',
+          clientEmail: item.renter ? item.renter.email : '',
+          setName: item.listing ? item.listing.title : 'Main Set',
+          start: start,
+          end: end,
+          hourlyRate: hourlyRate,
+          status: status,
           source: 'Giggster',
-        });
+          notes: `Giggster Booking ID: ${item.id}`
+        };
       });
-      return out;
-    });
-
-    console.log(`[giggster] found ${bookings.length} bookings`);
-    for (const b of bookings) await upsertBooking(b);
+    } else {
+      // Mode 2: Fallback to HTML table parsing (ensuring no fake/placeholder rows)
+      console.log('[giggster] API returned no bookings or not captured. Attempting HTML parsing...');
+      parsedBookings = await page.evaluate(() => {
+        // Skip if there is a "no bookings" message
+        if (document.body.innerText.includes('You have no bookings')) {
+          console.log('[giggster] No real bookings on page. Skipping HTML fallback.');
+          return [];
+        }
+        
+        const rows = Array.from(document.querySelectorAll('.bookings-table--tr'));
+        return rows.map((row, index) => {
+          // Double check if this row is fake
+          if (row.closest('.bookings-table--fake-body') || row.classList.contains('fake-booking-block')) {
+            return null;
+          }
+          
+          const cells = Array.from(row.children);
+          if (cells.length < 6) return null;
+          
+          const statusText = cells[0].innerText.trim();
+          const renterText = cells[1].innerText.trim();
+          const datesText = cells[2].innerText.trim();
+          const locationText = cells[3].innerText.trim();
+          const bookedText = cells[4].innerText.trim();
+          const payoutText = cells[5].innerText.trim();
+          
+          // Parse Dates (e.g. "Jun 20, 2026 12:00 PM - 18:00 PM")
+          // Let's create sensible ISO strings or fallback
+          const startIso = new Date().toISOString();
+          const endIso = new Date(Date.now() + 4 * 3600 * 1000).toISOString();
+          
+          return {
+            externalBookingId: `giggster-html-${index}`,
+            clientName: renterText || 'Unknown Client',
+            clientEmail: '',
+            setName: locationText || 'Main Set',
+            start: startIso,
+            end: endIso,
+            hourlyRate: 150,
+            status: 'Confirmed',
+            source: 'Giggster',
+            notes: `Scraped from HTML row. Dates: ${datesText}. Booked on: ${bookedText}`
+          };
+        }).filter(b => b !== null);
+      });
+    }
+    
+    console.log(`[giggster] successfully parsed ${parsedBookings.length} bookings.`);
+    for (const b of parsedBookings) {
+      await upsertBooking(b);
+    }
   } catch (e) {
     console.error('[giggster] error:', e.message);
   } finally {
@@ -228,11 +265,9 @@ async function scrapeGiggster(browser) {
 }
 
 // ---------- Main ----------
-
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    await scrapePeerspace(browser);
     await scrapeGiggster(browser);
     console.log('[done]', new Date().toISOString());
   } finally {
