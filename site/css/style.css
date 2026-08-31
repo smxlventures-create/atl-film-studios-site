@@ -1575,6 +1575,83 @@ img {
   transform: translateY(-4px);
 }
 
+.studio-tour-section {
+  padding: 96px 0 104px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.studio-tour-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.studio-tour-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
+  gap: 64px;
+  align-items: end;
+}
+
+.studio-tour-heading .page-eyebrow {
+  color: var(--accent);
+}
+
+.studio-tour-heading .section-title {
+  margin-top: 10px;
+  color: var(--paper);
+}
+
+.studio-tour-intro {
+  max-width: 560px;
+  margin: 0;
+  color: rgba(245, 241, 234, 0.72);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.studio-tour-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  min-height: 540px;
+  border: 1px solid rgba(245, 241, 234, 0.2);
+  border-radius: 12px;
+  background: #0d0f10;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.studio-tour-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.studio-tour-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 234, 0.55);
+}
+
+.studio-tour-footer a {
+  color: var(--paper);
+  text-decoration: none;
+  transition: color 0.2s var(--ease-out);
+}
+
+.studio-tour-footer a:hover,
+.studio-tour-footer a:focus-visible {
+  color: var(--accent);
+}
+
 /* Contact Page */
 .contact-section-main {
   padding: 80px 0;
@@ -1870,6 +1947,15 @@ img {
     grid-template-columns: 1fr;
     gap: 48px;
   }
+
+  .studio-tour-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .studio-tour-frame {
+    min-height: 460px;
+  }
   
   .footer-grid {
     grid-template-columns: 1fr 1fr;
@@ -1922,6 +2008,23 @@ img {
   .form-row-2 {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .studio-tour-section {
+    padding: 68px 0 72px;
+  }
+
+  .studio-tour-frame {
+    aspect-ratio: auto;
+    height: 430px;
+    min-height: 430px;
+    border-radius: 8px;
+  }
+
+  .studio-tour-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
   
   .footer-grid {
