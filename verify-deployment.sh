@@ -5,12 +5,12 @@ URL="${1:-https://atlfilmstudios.com}"
 echo "=== Verifying $URL ==="
 echo ""
 
-# All 13 pages
-PAGES=("" "courtroom" "hospital" "police-bullpen" "interrogation" "psych-wall" "jail-cell" "prison-cell" "led-walls" "about" "faq" "contact" "thank-you")
+# Current clean public routes. Set pages live under /sets/, not at the root.
+PAGES=("" "sets/courtroom/" "sets/hospital/" "sets/police-bullpen/" "sets/interrogation/" "sets/cyc-wall/" "sets/jail-cell/" "sets/prison-cell/" "sets/led-walls/" "about/" "location/" "faq/" "add-ons/" "contact/" "thank-you/")
 
 echo "=== Page reachability (HTTP code) ==="
-for path in "${PAGES[@]}"; do
-  url="$URL/$path"
+for route in "${PAGES[@]}"; do
+  url="$URL/$route"
   code=$(curl -sL -o /dev/null -w "%{http_code}" -A "Mozilla/5.0" "$url" --max-time 8)
   printf "%3s  %s\n" "$code" "$url"
 done
@@ -18,18 +18,18 @@ done
 echo ""
 echo "=== Pixel + Schema presence on home page ==="
 html=$(curl -sL "$URL/" -A "Mozilla/5.0")
+main_js=$(curl -sL "$URL/js/main.js" -A "Mozilla/5.0")
 echo "Pixel ID 1373400664837883:  $(echo "$html" | grep -c '1373400664837883') matches (need 2)"
 echo "fbevents.js:                $(echo "$html" | grep -c 'fbevents.js') (need 1)"
-echo "LocalBusiness schema:       $(echo "$html" | grep -c 'LocalBusiness') (need 1)"
-echo "ClickToPeerspace listener:  $(echo "$html" | grep -c 'ClickToPeerspace') (need 1)"
-echo "ClickToGiggster listener:   $(echo "$html" | grep -c 'ClickToGiggster') (need 1)"
-echo "ClickToCall listener:       $(echo "$html" | grep -c 'ClickToCall') (need 1)"
-echo "GA4 G-PS9VN8XEMR:           $(echo "$html" | grep -c 'G-PS9VN8XEMR') matches (need at least 1)"
+echo "ClickToPeerspace listener:  $(echo "$main_js" | grep -c 'ClickToPeerspace') (need at least 1)"
+echo "ClickToGiggster listener:   $(echo "$main_js" | grep -c 'ClickToGiggster') (need at least 1)"
+echo "ClickToCall listener:       $(echo "$main_js" | grep -c 'ClickToCall') (need at least 1)"
+echo "GA4 G-PS9VN8XEMR:           $(echo "$main_js" | grep -c 'G-PS9VN8XEMR') matches (need at least 1)"
 
 echo ""
 echo "=== Peerspace + Giggster outbound links on set pages ==="
-for slug in courtroom hospital police-bullpen interrogation psych-wall led-walls; do
-  page=$(curl -sL "$URL/$slug" -A "Mozilla/5.0")
+for slug in courtroom hospital police-bullpen interrogation cyc-wall led-walls; do
+  page=$(curl -sL "$URL/sets/$slug/" -A "Mozilla/5.0")
   pe=$(echo "$page" | grep -c 'peerspace.com')
   gi=$(echo "$page" | grep -c 'giggster.com')
   ph=$(echo "$page" | grep -c 'tel:.*4702318971')
