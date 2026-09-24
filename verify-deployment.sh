@@ -24,6 +24,7 @@ echo "LocalBusiness schema:       $(echo "$html" | grep -c 'LocalBusiness') (nee
 echo "ClickToPeerspace listener:  $(echo "$html" | grep -c 'ClickToPeerspace') (need 1)"
 echo "ClickToGiggster listener:   $(echo "$html" | grep -c 'ClickToGiggster') (need 1)"
 echo "ClickToCall listener:       $(echo "$html" | grep -c 'ClickToCall') (need 1)"
+echo "GA4 G-PS9VN8XEMR:           $(echo "$html" | grep -c 'G-PS9VN8XEMR') matches (need at least 1)"
 
 echo ""
 echo "=== Peerspace + Giggster outbound links on set pages ==="

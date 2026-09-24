@@ -151,3 +151,18 @@
     initQuoteForm();
   });
 })();
+// Google Analytics 4 — ATL Film Studios Website.
+// Loaded once from the shared public-site bundle so every public route reports
+// to the same verified web stream without duplicating markup across pages.
+const GA4_MEASUREMENT_ID = 'G-PS9VN8XEMR';
+window.dataLayer = window.dataLayer || [];
+function gtag() { window.dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', GA4_MEASUREMENT_ID);
+
+if (!document.querySelector(`script[src*="${GA4_MEASUREMENT_ID}"]`)) {
+  const ga4Script = document.createElement('script');
+  ga4Script.async = true;
+  ga4Script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
+  document.head.appendChild(ga4Script);
+}
